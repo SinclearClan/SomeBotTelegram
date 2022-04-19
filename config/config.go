@@ -14,6 +14,9 @@ type Config struct {
 		Key string `json:"key"`
 		Whitelist []int64 `json:"whitelist"`
 	} `json:"telegram"`
+	Macrodroid struct {
+		RestUrl string `json:"rest_url"`
+	} `json:"macrodroid"`
 	DHL struct {
 		Key string `json:"key"`
 		Endpoint string `json:"endpoint"`
