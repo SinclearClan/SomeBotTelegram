@@ -45,6 +45,7 @@ func main() {
 
 	dispatcher.AddHandler(handlers.NewCommand("start", telegram.Start))
 	dispatcher.AddHandler(handlers.NewCommand("dhl", telegram.DHL))
+	dispatcher.AddHandler(handlers.NewCommand("wo", telegram.Where))
 
 	err = updater.StartPolling(tgbot, &ext.PollingOpts{DropPendingUpdates: true})
 	if err != nil {
