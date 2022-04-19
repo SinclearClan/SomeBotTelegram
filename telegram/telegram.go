@@ -30,11 +30,45 @@ func Start(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 }
 
-func Notify(bot *gotgbot.Bot, chatId int64) error {
 
-	_, err := bot.SendMessage(chatId, "Marc nähert sich deinem Standort!", nil)
-	if err != nil {
-		return err
+func Notify(status string, chatId int64, bot *gotgbot.Bot) error {
+
+	if status == "arrived" {
+		_, err := bot.SendMessage(chatId, "Marc ist jetzt angekommen.", nil)
+		if err != nil {
+			return err
+		}
+	} else if status == "b10b14" {
+		_, err := bot.SendMessage(chatId, "Marc ist jetzt am B10/B14-Teiler in Cannstatt angekommen und nähert sich deinem Standort!", nil)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+	
+}
+
+func NotifyWithLocation(status string, lat float64, lon float64, chatId int64, bot *gotgbot.Bot) error {
+
+	if status == "arrived" {
+		_, err := bot.SendLocation(chatId, lat, lon, nil)
+		if err != nil {
+			return err
+		}
+		_, err = bot.SendMessage(chatId, "Marc ist jetzt angekommen.", nil)
+		if err != nil {
+			return err
+		}
+	} else if status == "b10b14" {
+		_, err := bot.SendLocation(chatId, lat, lon, nil)
+		if err != nil {
+			return err
+		}
+		_, err = bot.SendMessage(chatId, "Marc ist jetzt am B10/B14-Teiler in Cannstatt angekommen und nähert sich deinem Standort!", nil)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
