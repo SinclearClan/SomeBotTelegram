@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -18,8 +19,7 @@ func Start(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	_, err := ctx.EffectiveMessage.Reply(
 		bot, 
-		fmt.Sprintf("Hallo, Ich bin <b>%s</b>. Ich kann ein paar praktische Dinge. Marc hat dich sicherlich schon mit Details genervt.", 
-		bot.User.FirstName), 
+		fmt.Sprintf("Hallo, Ich bin <b>%s</b>. Ich kann ein paar praktische Dinge. Marc hat dich sicherlich schon mit Details genervt.", bot.User.FirstName), 
 		&gotgbot.SendMessageOpts{ParseMode: "html",},
 	)
 	if err != nil {
@@ -30,11 +30,70 @@ func Start(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 }
 
-func Notify(bot *gotgbot.Bot, chatId int64) error {
+// @Command
+func Where(bot *gotgbot.Bot, ctx *ext.Context) error {
 
-	_, err := bot.SendMessage(chatId, "Marc nähert sich deinem Standort!", nil)
+	if IsOnWhitelist(ctx.EffectiveChat.Id) {
+		resp, err := http.Get(cfg.Macrodroid.RestUrl + "/GetLocation?chatId=" + fmt.Sprintf("%d", ctx.EffectiveChat.Id))
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+	}
+
+	return nil
+
+}
+
+func SendLocation(chatId int64, lat float64, lon float64, acc float64, bot *gotgbot.Bot) error {
+	
+	_, err := bot.SendLocation(chatId, lat, lon, &gotgbot.SendLocationOpts{HorizontalAccuracy: acc})
 	if err != nil {
 		return err
+	}
+
+	return nil
+
+}
+
+func Notify(status string, chatId int64, bot *gotgbot.Bot) error {
+
+	if status == "arrived" {
+		_, err := bot.SendMessage(chatId, "Marc ist jetzt angekommen.", nil)
+		if err != nil {
+			return err
+		}
+	} else if status == "b10b14" {
+		_, err := bot.SendMessage(chatId, "Marc ist jetzt am B10/B14-Teiler in Cannstatt angekommen und nähert sich deinem Standort!", nil)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+	
+}
+
+func NotifyWithLocation(status string, lat float64, lon float64, chatId int64, bot *gotgbot.Bot) error {
+
+	if status == "arrived" {
+		_, err := bot.SendLocation(chatId, lat, lon, nil)
+		if err != nil {
+			return err
+		}
+		_, err = bot.SendMessage(chatId, "Marc ist jetzt angekommen.", nil)
+		if err != nil {
+			return err
+		}
+	} else if status == "b10b14" {
+		_, err := bot.SendLocation(chatId, lat, lon, nil)
+		if err != nil {
+			return err
+		}
+		_, err = bot.SendMessage(chatId, "Marc ist jetzt am B10/B14-Teiler in Cannstatt angekommen und nähert sich deinem Standort!", nil)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -66,7 +125,7 @@ func DHL(bot *gotgbot.Bot, ctx *ext.Context) error {
 		for _, shipment := range *packageInfo.Shipments {
 			_, err := ctx.EffectiveMessage.Reply(
 				bot, 
-				fmt.Sprintf("<b>DHL Tracking Status</b>\nTracking-Nummer: %s\nStatus: %s\nAddressiert an: %s\nAnkunft: %s", shipment.Id, shipment.Status.Status, shipment.Destination.Address.AddressLocality, shipment.EstimatedTimeOfDelivery), 
+				fmt.Sprintf("<b>DHL Tracking Status</b>\nTracking-Nummer: %s\nStatus: %s", shipment.Id, shipment.Status.Status), 
 				&gotgbot.SendMessageOpts{
 					ParseMode: "html",
 				},

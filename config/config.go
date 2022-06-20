@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// Struct representing the config file for the server, bot and used APIs.
 type Config struct {
 	Webserver struct {
 		Port string `json:"port"`
@@ -14,12 +15,16 @@ type Config struct {
 		Key string `json:"key"`
 		Whitelist []int64 `json:"whitelist"`
 	} `json:"telegram"`
+	Macrodroid struct {
+		RestUrl string `json:"rest_url"`
+	} `json:"macrodroid"`
 	DHL struct {
 		Key string `json:"key"`
 		Endpoint string `json:"endpoint"`
 	} `json:"dhl"`
 }
 
+// Parses the config JSON file into a Config struct
 func ParseConfigFromJson(fileName string) (conf *Config, err error) {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -33,6 +38,7 @@ func ParseConfigFromJson(fileName string) (conf *Config, err error) {
 	return
 }
 
+// Shortcut for getting the configuration from the default location
 func GetConfig() *Config {
 	config, err := ParseConfigFromJson("./config.json")
 	if err != nil {
