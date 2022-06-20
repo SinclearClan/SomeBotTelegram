@@ -125,7 +125,7 @@ func DHL(bot *gotgbot.Bot, ctx *ext.Context) error {
 		for _, shipment := range *packageInfo.Shipments {
 			_, err := ctx.EffectiveMessage.Reply(
 				bot, 
-				fmt.Sprintf("<b>DHL Tracking Status</b>\nTracking-Nummer: %s\nStatus: %s\nAddressiert an: %s\nAnkunft: %s", shipment.Id, shipment.Status.Status, shipment.Destination.Address.AddressLocality, shipment.EstimatedTimeOfDelivery), 
+				fmt.Sprintf("<b>DHL Tracking Status</b>\nTracking-Nummer: %s\nStatus: %s", shipment.Id, shipment.Status.Status), 
 				&gotgbot.SendMessageOpts{
 					ParseMode: "html",
 				},

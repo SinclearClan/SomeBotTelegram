@@ -4,9 +4,9 @@ import (
 	"strconv"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/SinclearClan/SomeBotTelegram/telegram"
 	"github.com/SinclearClan/SomeBotTelegram/config"
-	"github.com/gin-gonic/gin"
 )
 
 var (
