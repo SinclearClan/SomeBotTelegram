@@ -2,7 +2,7 @@ module github.com/SinclearClan/SomeBotTelegram
 
 go 1.18
 
-require github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.8
+require github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-rc.11
 
 require (
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
